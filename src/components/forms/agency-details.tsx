@@ -3,7 +3,7 @@ import { Agency } from "@prisma/client";
 import React, { useEffect, useState } from "react";
 import { useToast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
-import {v4} from 'uuid'
+import { v4 } from "uuid";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -98,8 +98,8 @@ const AgencyDetails = ({ data }: Props) => {
 
   const handleSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
-      let newUserData
-      let custId
+      let newUserData;
+
       if (!data?.id) {
         const bodyData = {
           email: values.companyEmail,
@@ -121,7 +121,7 @@ const AgencyDetails = ({ data }: Props) => {
             postal_code: values.zipCode,
             state: values.zipCode,
           },
-        }
+        };
 
         // const customerResponse = await fetch('/api/stripe/create-customer', {
         //   method: 'POST',
@@ -135,12 +135,11 @@ const AgencyDetails = ({ data }: Props) => {
         // custId = customerData.customerId
       }
 
-      newUserData = await initUser({ role: 'AGENCY_OWNER' })
-      if (!data?.customerId && !custId) return
+      newUserData = await initUser({ role: "AGENCY_OWNER" });
+      // if (!data?.customerId) return;
 
-      const response = await upsertAgency({
+      await upsertAgency({
         id: data?.id ? data.id : v4(),
-        customerId: data?.customerId || custId || '',
         address: values.address,
         agencyLogo: values.agencyLogo,
         city: values.city,
@@ -153,25 +152,23 @@ const AgencyDetails = ({ data }: Props) => {
         createdAt: new Date(),
         updatedAt: new Date(),
         companyEmail: values.companyEmail,
-        connectAccountId: '',
+        connectAccountId: "",
         goal: 5,
-      })
+        // customerId: ""
+      });
       toast({
-        title: 'Created Agency',
-      })
-      if (data?.id) return router.refresh()
-      if (response) {
-        return router.refresh()
-      }
+        title: "Created Agency",
+      });
+      return router.refresh();
     } catch (error) {
-      console.log(error)
+      console.log(error);
       toast({
-        variant: 'destructive',
-        title: 'Oppse!',
-        description: 'could not create your agency',
-      })
+        variant: "destructive",
+        title: "Oppse!",
+        description: "could not create your agency",
+      });
     }
-  }
+  };
 
   const handleDeleteAgency = async () => {
     if (!data?.id) return;
@@ -193,7 +190,7 @@ const AgencyDetails = ({ data }: Props) => {
         description: "could not delete your agency ",
       });
     }
-    setDeletingAgency(false)
+    setDeletingAgency(false);
   };
   return (
     <AlertDialog>
